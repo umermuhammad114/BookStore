@@ -1,5 +1,6 @@
 using BookStore.Authentication;
 using BookStore.Data;
+using BookStore.Middlewares;
 using BookStore.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -43,6 +44,7 @@ builder.Services.AddTransient<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 
 var app = builder.Build();
@@ -55,6 +57,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
